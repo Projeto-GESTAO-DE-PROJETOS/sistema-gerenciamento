@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhysioMax - Gerenciamento de Consultas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">PM</div>
+                <h1>PhysioMax</h1>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-tab="dashboard">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-btn" data-tab="consultas">
+                    <span class="icon">📅</span>
+                    <span>Consultas</span>
+                </button>
+                <button class="nav-btn" data-tab="pacientes">
+                    <span class="icon">👥</span>
+                    <span>Pacientes</span>
+                </button>
+                <button class="nav-btn" data-tab="relatorios">
+                    <span class="icon">📈</span>
+                    <span>Relatórios</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h2 id="page-title">Dashboard</h2>
+                <div class="header-actions">
+                    <button class="btn-add" id="btn-novo">+ Nova Consulta</button>
+                    <div class="user-profile">
+                        <img src="https://via.placeholder.com/40" alt="Perfil" class="avatar">
+                        <span>Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Tab -->
+            <section id="dashboard" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-info">
+                            <h3>Consultas Hoje</h3>
+                            <p class="stat-number" id="consultas-hoje">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-info">
+                            <h3>Concluídas</h3>
+                            <p class="stat-number" id="consultas-concluidas">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-info">
+                            <h3>Pendentes</h3>
+                            <p class="stat-number" id="consultas-pendentes">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👤</div>
+                        <div class="stat-info">
+                            <h3>Total Pacientes</h3>
+                            <p class="stat-number" id="total-pacientes">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="agenda-box">
+                    <h3>Próximas Consultas</h3>
+                    <div id="proximas-consultas" class="agenda-list"></div>
+                </div>
+            </section>
+
+            <!-- Consultas Tab -->
+            <section id="consultas" class="tab-content">
+                <div class="consultas-toolbar">
+                    <input type="text" id="search-input" class="search-box" placeholder="Buscar paciente ou ID...">
+                    <select id="status-filter" class="filter-select">
+                        <option value="">Todos os Status</option>
+                        <option value="agendada">Agendada</option>
+                        <option value="em-andamento">Em Andamento</option>
+                        <option value="concluida">Concluída</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="consultas-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Paciente</th>
+                                <th>Data/Hora</th>
+                                <th>Tipo</th>
+                                <th>Profissional</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="consultas-tbody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Pacientes Tab -->
+            <section id="pacientes" class="tab-content">
+                <div class="pacientes-toolbar">
+                    <input type="text" id="search-paciente" class="search-box" placeholder="Buscar paciente...">
+                </div>
+                <div class="pacientes-grid" id="pacientes-grid"></div>
+            </section>
+
+            <!-- Relatórios Tab -->
+            <section id="relatorios" class="tab-content">
+                <div class="relatorios-container">
+                    <div class="relatorio-card">
+                        <h3>Consultas por Tipo</h3>
+                        <div class="chart-placeholder">
+                            <p>Gráfico de consultas por tipo de atendimento</p>
+                            <div id="chart-tipos"></div>
+                        </div>
+                    </div>
+                    <div class="relatorio-card">
+                        <h3>Profissionais Mais Ativos</h3>
+                        <div class="chart-placeholder">
+                            <p>Ranking de profissionais</p>
+                            <div id="chart-profissionais"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal para Nova/Editar Consulta -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Nova Consulta</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="consulta-form">
+                <div class="form-group">
+                    <label for="paciente">Paciente</label>
+                    <input type="text" id="paciente" placeholder="Nome do paciente" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="data">Data</label>
+                        <input type="date" id="data" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hora">Hora</label>
+                        <input type="time" id="hora" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tipo">Tipo de Atendimento</label>
+                        <select id="tipo" required>
+                            <option value="">Selecione...</option>
+                            <option value="fisioterapia">Fisioterapia</option>
+                            <option value="massagem">Massagem Terapêutica</option>
+                            <option value="reabilitacao">Reabilitação</option>
+                            <option value="pilates">Pilates</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="profissional">Profissional</label>
+                        <select id="profissional" required>
+                            <option value="">Selecione...</option>
+                            <option value="Dr. João Silva">Dr. João Silva</option>
+                            <option value="Dra. Maria Santos">Dra. Maria Santos</option>
+                            <option value="Dr. Pedro Costa">Dr. Pedro Costa</option>
+                            <option value="Dra. Ana Oliveira">Dra. Ana Oliveira</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" required>
+                        <option value="agendada">Agendada</option>
+                        <option value="em-andamento">Em Andamento</option>
+                        <option value="concluida">Concluída</option>
+                        <option value="cancelada">Cancelada</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="observacoes">Observações</label>
+                    <textarea id="observacoes" placeholder="Observações adicionais..." rows="3"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel">Cancelar</button>
+                    <button type="submit" class="btn-submit">Salvar Consulta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
